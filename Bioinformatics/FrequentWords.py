@@ -14,11 +14,13 @@ def FrequentWords(Text, k):
     words = []
     freq = FrequencyMap(Text, k)
     m = max(freq.values())
-    #print(m)
+    print(m)
     for key in freq:
         #print(key)
         #print(freq[key])
         if freq[key]==m:
             words.append(key)
     return words
-print(FrequentWords("CGCCTAAATAGCCTCGCGGAGCCTTATGTCATACTCGTCCT",3))
+
+#print(FrequencyMap("atgaccgggatactgataaaaaaaagggggggggcgtacacattagataaacgtatgaagtacgttagactcggcgccgccg",15))
+print(FrequentWords("acccctattttttgagcagatttagtgacctggaaaaaaaatttgagtacaaaacttttccgaataaaaaaaaaggggggga",15))
