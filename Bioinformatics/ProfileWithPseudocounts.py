@@ -1,27 +1,3 @@
-def Pr(Text, Profile):
-    pro=1
-    for col in range(len(Profile['A'])):
-        if Text[col]=='A':
-            pro=pro*Profile['A'][col]
-        elif Text[col]=='C':
-            pro=pro*Profile['C'][col]
-        elif Text[col]=='G':
-            pro=pro*Profile['G'][col]
-        elif Text[col]=='T':
-            pro=pro*Profile['T'][col]
-    return pro
-
-def ProfileMostProbableKmer(text, k , profile):
-    pro_max=-1
-    k_mer_max=''
-    for i in range(len(text)):
-        k_mer=text[i:i+k]
-        if len(k_mer)==k:
-            if Pr(k_mer, profile)>pro_max :
-                pro_max=Pr(k_mer,profile)
-                k_mer_max=k_mer
-    return k_mer_max
-
 def CountWithPseudocounts(Motifs):
     mot=Motifs
     count={'A':[],'C':[],'G':[],'T':[]}
@@ -64,12 +40,5 @@ def ProfileWithPseudocounts(Motifs):
     return count2
 
 
-def Motifs(Profile, Dna):
-    motifs=[]
-    t=len(Dna)
-    k=3 #K-MER QUE PIDEN
-    for i in range(t):
-        motif=ProfileMostProbableKmer(Dna[i],k,Profile) # analizo dna por dna cual es el mas probalbel
-        motifs.append(motif)
-    return motifs
-
+motifs=['AACGTA', 'CCCGTT', 'CACCTT', 'GGATTA', 'TTCCGG']
+print(ProfileWithPseudocounts(motifs))

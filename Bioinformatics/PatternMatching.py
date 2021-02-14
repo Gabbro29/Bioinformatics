@@ -5,8 +5,12 @@ def PatternMatching(Pattern, Genome):
     for posi in range(len(geno)):
         if geno[posi:posi+len(patron)]==patron:
             positions.append(posi)
-    
     return positions
-print(PatternMatching("ATAT","GATATATGCATATACTT"))
+r=open("Vibrio_cholerae.txt",'r')
+data1=str(r.readlines())
+#print(type(data1))
+data=PatternMatching("CTTGATCAT",data1)
+print(*data,sep=" ")
 
-print(True and (False or False))
+
+r.close()
