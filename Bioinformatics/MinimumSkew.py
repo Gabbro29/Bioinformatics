@@ -24,5 +24,7 @@ def MinimumSkew(Genome):
         if skew[i]==minimo:
             posis.append(i)
     return posis
-Geno=input("Genome:")
-print("Position of minimum skew:", MinimumSkew(Geno))
+r=open("Text_skew.txt",'r')
+Geno_test=r.readlines()
+#Geno=input("Genome:")
+print("Position of minimum skew:", MinimumSkew(Geno_test))

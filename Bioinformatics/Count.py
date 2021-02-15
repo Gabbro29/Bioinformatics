@@ -27,11 +27,3 @@ def Count(Motifs):
                 count['T'].append(counter_T)
     return count
 
-
-
-
-
-motfis=["AACGTA","CCCGTT","CACCTT","GGATTA","TTCCGG"]
-
-
-print(Count(motfis))
