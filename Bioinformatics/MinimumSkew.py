@@ -24,4 +24,5 @@ def MinimumSkew(Genome):
         if skew[i]==minimo:
             posis.append(i)
     return posis
-print(MinimumSkew("GATACACTTCCCGAGTAGGTACTG"))
+Geno=input("Genome:")
+print("Position of minimum skew:", MinimumSkew(Geno))

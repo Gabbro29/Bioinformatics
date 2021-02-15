@@ -6,4 +6,6 @@ def HammingDistance(p,q):
             counter+=1
     return counter
 
-print(HammingDistance("TGACCCGTTATGCTCGAGTTCGGTCAGAGCGTCATTGCGAGTAGTCGTTTGCTTTCTCAAACTCC","GAGCGATTAAGCGTGACAGCCCCAGGGAACCCACAAAACGTGATCGCAGTCCATCCGATCATACA"))
+pe=str(input("Sequence 1:"))
+qu=str(input("Sequence 2:"))
+print("HammingDistance:",HammingDistance(pe,qu))

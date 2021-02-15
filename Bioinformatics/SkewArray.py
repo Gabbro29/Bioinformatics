@@ -13,4 +13,6 @@ def SkewArray(Genome):
     for i in range(len(Skew)):
         ske.append(Skew[i])
     return ske
-print(SkewArray("AGCGTGCCGAAATATGCCGCCAGACCTGCTGCGGTGGCCTCGCCGACTTCACGGATGCCAAGTGCATAGAGGAAGCGAGCAAAGGTGGTTTCTTTCGCTTTATCCAGCGCGTTAACCACGTTCTGTGCCGACTTT"))
+
+geno=input("Genome:")
+print("SkewArray:",SkewArray(geno))
