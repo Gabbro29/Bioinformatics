@@ -1,3 +1,5 @@
+import os
+direct=os.getcwd()
 
 def HammingDistance(p,q):
     counter=0
@@ -18,7 +20,7 @@ def ApproximatePatternCount(Pattern, Text,d): #pattern == secuencia ,,, Text== g
                 count+=1    
     return count
 
-r=open("apc.txt",'r')
+r=open(direct+"/texts/apc.txt",'r')
 inp=r.readlines()
 for j in range(len(inp)):
     inp[j]=inp[j].strip("\n")
@@ -26,3 +28,4 @@ secuencia=inp[0]
 genoma=inp[1]
 diferencia=int(inp[2])
 print("ApproxPatternCount:",ApproximatePatternCount(secuencia,genoma,diferencia))
+r.close()
