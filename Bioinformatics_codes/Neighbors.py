@@ -1,9 +1,6 @@
 import os
 repo=os.getcwd()
 
-import os
-repo=os.getcwd()
-
 def HammingDistance(p,q):
     counter=0
 
@@ -27,5 +24,11 @@ def Neighbors(Pattern,d):
             Neighborhood.add(Pattern[0]+text)
     return Neighborhood
 
-def FrequentWordWithMismatches(Text,k,d):
-    pass
+te=open(repo+"/texts/nboor.txt",'r')
+inpu=te.readlines()
+te.close()
+for i in range(len(inpu)):
+    inpu[i]=inpu[i].strip("\n")
+pattern=inpu[0]
+distance=int(inpu[1])
+print("Neighbors:",*Neighbors(pattern,distance))
