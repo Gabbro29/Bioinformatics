@@ -60,5 +60,9 @@ def Score(motfis):
         score+=dif
     return score
 
-motfis=["AACGTA","CCCGTT","CACCTT","GGATTA","TTCCGG"]
+motfis=["AACGTA",
+"CCCGTT",
+"CACCTT",
+"GGATTA",
+"TTCCGG"]
 print(Score(motfis))
