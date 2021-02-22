@@ -1,4 +1,3 @@
-# Bioinformatics
-Codigos realizados en el curso de Bioinformatics for beginners de Coursera 
+# Bioinformatics 
 
-El curso se llama *Biology Meets Programming: Bioinformatics for Beginners.* Impartido por la _Universidad de California San Diego_
+Codes based on the algorithms of the book: Bioinformatics Algorithms[https://www.bioinformaticsalgorithms.org/]
