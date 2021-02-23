@@ -1,3 +1,5 @@
+import os
+repo=os.getcwd()
 def Pr(Text, Profile):
     pro=1
     for col in range(len(Profile['A'])):
@@ -22,8 +24,18 @@ def ProfileMostProbableKmer(text, k , profile):
                 k_mer_max=k_mer
     return k_mer_max
 
-text='AACCGGTT'
-k=3
-profile={'A': [1.0, 1.0, 1.0], 'C': [0.0, 0.0, 0.0,], 'G': [0.0, 0.0, 0.0,], 'T': [0.0, 0.0, 0.0,]}
+text='ACCTGTTTATTGCCTAAGTTCCGAACAAACCCAATATAGCCCGAGGGCCT'
+k=5
+profile={'A': [0.2, 0.2, 0.3,0.2,0.3], 'C': [0.4,0.3,0.1,0.5,0.1], 'G': [0.3,0.3,0.5,0.2,0.4], 'T':[0.1,0.2,0.1,0.1,0.2]}
+
+r=open(repo+"/texts/profilekmer.txt","r")
+profilekmer=r.readlines()
+r.close()
+for i in range(len(profilekmer)):
+    profilekmer[i]=profilekmer[i].strip()
+
+text=profilekmer[0]
+k=int(profilekmer[1])
+profile={"A":list(map(float,profilekmer[2].split(" "))),"C":list(map(float,profilekmer[3].split(" "))),"G":list(map(float,profilekmer[4].split(" "))),"T":list(map(float,profilekmer[5].split(" ")))}
 
 print(ProfileMostProbableKmer(text,k,profile))

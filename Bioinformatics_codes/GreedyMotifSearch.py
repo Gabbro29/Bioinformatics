@@ -1,3 +1,5 @@
+import os
+repo=os.getcwd()
 def Count(Motifs):
     mot=Motifs
     count={'A':[],'C':[],'G':[],'T':[]}
@@ -89,8 +91,6 @@ def GreedyMotifSearch(Dna, k, t):
     BestMotifs=[]
     for i in range(t):
         BestMotifs.append(Dna[i][0:k])
-
-    #print(BestMotifs)
     n = len(Dna[0])
     for i in range(n-k+1):
         Motifs = []
@@ -102,12 +102,14 @@ def GreedyMotifSearch(Dna, k, t):
             BestMotifs = Motifs
     return BestMotifs
 
-Dna = ["GGCGTTCAGGCA",
-"AAGAATCAGTCA",
-"CAAGGAGTTCGC",
-"CACGTCAATCAC",
-"CAATAATATTCG"
-]
-#print(Dna)
+reader=open(repo+"/texts/greedy.txt","r")
+greedy=reader.readlines()
+reader.close()
+for i in range(len(greedy)):
+    greedy[i]=greedy[i].strip()
 
-print(GreedyMotifSearch(Dna, 3, 5))
+k=int((greedy[0].split(" "))[0])
+t=int((greedy[0].split(" "))[1])
+Dna=greedy[1:]
+
+print(*GreedyMotifSearch(Dna, k, t))
