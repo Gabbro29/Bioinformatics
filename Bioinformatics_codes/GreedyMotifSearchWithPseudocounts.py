@@ -1,3 +1,6 @@
+import os
+repo=os.getcwd()
+
 def CountWithPseudocounts(Motifs):
     mot=Motifs
     count={'A':[],'C':[],'G':[],'T':[]}
@@ -103,7 +106,13 @@ def GreedyMotifSearchWithPseudocounts(Dna, k ,t):
             BestMotifs = Motifs
     return BestMotifs
 
-dna = ['GGCGTTCAGGCA', 'AAGAATCAGTCA', 'CAAGGAGTTCGC', 'CACGTCAATCAC', 'CAATAATATTCG']
-k=3
-t=5
-print(GreedyMotifSearchWithPseudocounts(dna,k,t))
+
+reader=open(repo+"/texts/greedypc.txt","r")
+greedypc=reader.readlines()
+for i in range(len(greedypc)):
+    greedypc[i]=greedypc[i].strip()
+k=int((greedypc[0].split(" "))[0])
+t=int((greedypc[0].split(" "))[1])
+dna=greedypc[1:]
+
+print(*GreedyMotifSearchWithPseudocounts(dna,k,t))
