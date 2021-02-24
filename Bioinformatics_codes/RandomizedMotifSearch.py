@@ -1,66 +1,26 @@
-
-#import the random package here
+## for this assignment I rewritte some functions to work better
 
 import random
- 
-# Input:  Positive integers k and t, followed by a list of strings Dna
-# Output: RandomizedMotifSearch(Dna, k, t)
-def RandomizedMotifSearch(Dna, k, t):
-
-    M=RandomMotifs(Dna, k ,t)
-    BestMotifs=M
-
-    while True:
-        #print(M)
-        Profile = ProfileWithPseudocounts(M)
-        M = Motifs(Profile, Dna)
-
-        if Score(M) < Score(BestMotifs):
-            BestMotifs = M
-        else:
-            return BestMotifs 
-
-
-# Insert necessary subroutines here, including  esta RandomMotifs(), esta ProfileWithPseudocounts(), esta Motifs(), Score(),
-# and any subroutines that these functions need.
+import os
+repo=os.getcwd()
 def Pr(Text, Profile):
-
     p = 1
     for i in range(0,len(Text)):
         p *= Profile[Text[i]][i]
-
     return p
 
 
-def Motifs(pf,dna):
-
-    k = len(pf['A'])
-    D = []
-    for i in range(0,len(dna)):
-        km = []
-        sc = []
-        for kk in range(len(dna[i])-k+1):
-            km += [dna[i][kk:kk+k]]
-        for i in km:
-            sc += [Pr(i,pf)]
-        D += [km[sc.index(max(sc))]]
-    return D
-
-
 def RandomMotifs(Dna, k, t):
-    
-
     cant_nucl=len(Dna[0])
     random_motifs=[]
-    for j in range(t):
+    for dna_string in Dna:
         ran_po=random.randint(0,cant_nucl-k)
-        random_motifs.append(Dna[j][ran_po:k+ran_po])
+        random_motifs.append(dna_string[ran_po:k+ran_po])
     return random_motifs
 
-def CountWithPseudocounts(Motifs):
-    mot=Motifs
+def CountWithPseudocounts(motifs):
+    mot=motifs
     count={'A':[],'C':[],'G':[],'T':[]}
-    
     for col in range(len(mot[0])):
         counter_A=1
         counter_C=1
@@ -85,24 +45,47 @@ def CountWithPseudocounts(Motifs):
             elif sym=='T':
                 count['T'].append(counter_T)
     return count
+    
+def Count(Motifs):
+    mot=Motifs
+    count={'A':[],'C':[],'G':[],'T':[]}
+    
+    for col in range(len(mot[0])):
+        counter_A=0
+        counter_C=0
+        counter_G=0
+        counter_T=0
+        for fil in range(len(mot)):
+            if mot[fil][col]=='A':
+                counter_A+=1
+            elif mot[fil][col]=='C':
+                counter_C+=1
+            elif mot[fil][col]=='G':
+                counter_G+=1
+            elif mot[fil][col]=='T':
+                counter_T+=1
+        for sym in 'ACGT':
+            if sym=='A':
+                count['A'].append(counter_A)
+            elif sym=='C':
+                count['C'].append(counter_C)
+            elif sym=='G':
+                count['G'].append(counter_G)
+            elif sym=='T':
+                count['T'].append(counter_T)
+    return count
 
 def ProfileWithPseudocounts(Motifs):
-    mot=Motifs
-    count2=CountWithPseudocounts(mot)
-    count3=CountWithPseudocounts(mot)
-    for sym in 'ACGT':
-        for col in range(len(count2[sym])):
-            cant_nu=count3['A'][col]+count3['C'][col]+count3['G'][col]+count3['T'][col]
-            #print(cant_nu)
-            count2[sym][col]=float(count2[sym][col]/cant_nu)
+    profile={'A':[],'C':[],'G':[],'T':[]}
+    pseudocount=CountWithPseudocounts(Motifs)
+    for x in pseudocount:
+        for y in pseudocount[x]:
+            prob=y/int(t)
+            profile[x].append(prob)
+    return profile
     
-    return count2
-
-
-
 def Consensus(motfis):
-
-    pro2=ProfileWithPseudocounts(motfis)
+    pro2=Count(motfis)
     code=""
     for col in range(len(motfis[0])):
         symi="A"
@@ -123,5 +106,56 @@ def Score(motfis):
         score+=dif
     return score
 
-print(RandomizedMotifSearch(['CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA','GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG','TAGTACCGAGACCGAAAGAAGTATACAGGCGT','TAGATCAAGTTTCAGGTGCACGTCGGTGAACC','AATCCACCAGCTCCACGTGCAATGTTGGCCTA'],8,5))
+def ProfileMostProbableKmer(text, k , profile):
+    most_probal=0
+    for i in range(len(text)-k+1):
+        kmer=text[i:i+k]
+        prob_kmer=Pr(kmer,profile)
+        if prob_kmer>most_probal:
+            most_probal=prob_kmer
+            most_probkmer=kmer
+    return most_probkmer
+
+def Motifs(profile,Dna,k):
+    Motif=[]
+    for dnastring in Dna:
+        Motif.append(ProfileMostProbableKmer(dnastring,k,profile))
+    return Motif
+
+def RandomizedMotifSearch(Dna, k, t):
+    M=RandomMotifs(Dna,k,t)
+    BestMotifs=M[:]
+
+    while True:
+        current_profile = ProfileWithPseudocounts(M)
+        M = Motifs(current_profile, Dna,k)
+        score=Score(M)
+        BestScore=Score(BestMotifs)
+        if score < BestScore:
+            BestScore=score
+            BestMotifs=M[:]
+        else:
+            return BestMotifs 
+
+def iterations_RandomMotifSearch(Dna,k,t):
+    bmotif=RandomizedMotifSearch(Dna,k,t)
+    for i in range(1000):
+        RndmMotif=RandomizedMotifSearch(Dna,k,t)
+        if Score(bmotif)>Score(RndmMotif):
+            bmotif=RndmMotif   
+        else:
+            bmotif=bmotif
+    return bmotif
+
+with open(repo+"/texts/randsearch.txt","r") as reader:
+    data=reader.readlines()
+for i in range(len(data)):
+    data[i]=data[i].strip()
+
+k=int((data[0].split(" "))[0])
+t=int((data[0].split(" "))[1])
+Dna=data[1:]
+random.seed(0)
+
+print(*iterations_RandomMotifSearch(Dna,k,t))
 

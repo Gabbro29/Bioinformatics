@@ -3,9 +3,9 @@ import random
 def RandomMotifs(Dna, k, t):
     cant_nucl=len(Dna[0])
     random_motifs=[]
-    for j in range(t):
+    for dna_string in Dna:
         ran_po=random.randint(0,cant_nucl-k)
-        random_motifs.append(Dna[j][ran_po:k+ran_po])
+        random_motifs.append(dna_string[ran_po:k+ran_po])
     return random_motifs
 
 k=3
