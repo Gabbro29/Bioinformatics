@@ -18,38 +18,9 @@ def RandomMotifs(Dna, k, t):
         random_motifs.append(dna_string[ran_po:k+ran_po])
     return random_motifs
 
-def CountWithPseudocounts(motifs):
-    mot=motifs
-    count={'A':[],'C':[],'G':[],'T':[]}
-    for col in range(len(mot[0])):
-        counter_A=1
-        counter_C=1
-        counter_G=1
-        counter_T=1
-        for fil in range(len(mot)):
-            if mot[fil][col]=='A':
-                counter_A+=1
-            elif mot[fil][col]=='C':
-                counter_C+=1
-            elif mot[fil][col]=='G':
-                counter_G+=1
-            elif mot[fil][col]=='T':
-                counter_T+=1
-        for sym in 'ACGT':
-            if sym=='A':
-                count['A'].append(counter_A)
-            elif sym=='C':
-                count['C'].append(counter_C)
-            elif sym=='G':
-                count['G'].append(counter_G)
-            elif sym=='T':
-                count['T'].append(counter_T)
-    return count
-    
-def Count(Motifs):
+def CountWithPseudocounts(Motifs):
     mot=Motifs
     count={'A':[],'C':[],'G':[],'T':[]}
-    
     for col in range(len(mot[0])):
         counter_A=0
         counter_C=0
@@ -66,13 +37,13 @@ def Count(Motifs):
                 counter_T+=1
         for sym in 'ACGT':
             if sym=='A':
-                count['A'].append(counter_A)
+                count['A'].append(counter_A+1)
             elif sym=='C':
-                count['C'].append(counter_C)
+                count['C'].append(counter_C+1)
             elif sym=='G':
-                count['G'].append(counter_G)
+                count['G'].append(counter_G+1)
             elif sym=='T':
-                count['T'].append(counter_T)
+                count['T'].append(counter_T+1)
     return count
 
 def ProfileWithPseudocounts(Motifs):
@@ -80,12 +51,12 @@ def ProfileWithPseudocounts(Motifs):
     pseudocount=CountWithPseudocounts(Motifs)
     for x in pseudocount:
         for y in pseudocount[x]:
-            prob=y/int(t)
+            prob=y/int(len(Motifs)+4)
             profile[x].append(prob)
     return profile
     
 def Consensus(motfis):
-    pro2=Count(motfis)
+    pro2=ProfileWithPseudocounts(motfis)
     code=""
     for col in range(len(motfis[0])):
         symi="A"
@@ -142,9 +113,9 @@ def iterations_RandomMotifSearch(Dna,k,t):
     for i in range(1000):
         RndmMotif=RandomizedMotifSearch(Dna,k,t)
         if Score(bmotif)>Score(RndmMotif):
-            bmotif=RndmMotif   
+            bmotif=RndmMotif[:]
         else:
-            bmotif=bmotif
+            bmotif=bmotif[:]
     return bmotif
 
 with open(repo+"/texts/randsearch.txt","r") as reader:
@@ -157,5 +128,12 @@ t=int((data[0].split(" "))[1])
 Dna=data[1:]
 random.seed(0)
 
-print(*iterations_RandomMotifSearch(Dna,k,t))
+#print(*iterations_RandomMotifSearch(Dna,k,t),sep="\n")
 
+Dna=["AAGCCAAA",
+"AATCCTGG",
+"GCTACTTG",
+"ATGTTTTG"]
+Rmot=["CCA","CCT","CTT","TTG"]
+x=Motifs(ProfileWithPseudocounts(Rmot),Dna,3)
+print(x)

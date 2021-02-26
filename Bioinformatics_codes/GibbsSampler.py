@@ -1,23 +1,23 @@
 import random
-
-
+import os
+repo=os.getcwd()
+### this problem was solved using the RandomizedMotifSearch algorithm
 def RandomMotifs(Dna, k, t):
     cant_nucl=len(Dna[0])
     random_motifs=[]
-    for j in range(t):
+    for dna_string in Dna:
         ran_po=random.randint(0,cant_nucl-k)
-        random_motifs.append(Dna[j][ran_po:k+ran_po])
+        random_motifs.append(dna_string[ran_po:k+ran_po])
     return random_motifs
 
 def CountWithPseudocounts(Motifs):
     mot=Motifs
     count={'A':[],'C':[],'G':[],'T':[]}
-    
     for col in range(len(mot[0])):
-        counter_A=1
-        counter_C=1
-        counter_G=1
-        counter_T=1
+        counter_A=0
+        counter_C=0
+        counter_G=0
+        counter_T=0
         for fil in range(len(mot)):
             if mot[fil][col]=='A':
                 counter_A+=1
@@ -29,71 +29,40 @@ def CountWithPseudocounts(Motifs):
                 counter_T+=1
         for sym in 'ACGT':
             if sym=='A':
-                count['A'].append(counter_A)
+                count['A'].append(counter_A+1)
             elif sym=='C':
-                count['C'].append(counter_C)
+                count['C'].append(counter_C+1)
             elif sym=='G':
-                count['G'].append(counter_G)
+                count['G'].append(counter_G+1)
             elif sym=='T':
-                count['T'].append(counter_T)
+                count['T'].append(counter_T+1)
     return count
 
 def ProfileWithPseudocounts(Motifs):
-    mot=Motifs
-    count2=CountWithPseudocounts(mot)
-    count3=CountWithPseudocounts(mot)
-    for sym in 'ACGT':
-        for col in range(len(count2[sym])):
-            cant_nu=count3['A'][col]+count3['C'][col]+count3['G'][col]+count3['T'][col]
-            #print(cant_nu)
-            count2[sym][col]=float(count2[sym][col]/cant_nu)
-    
-    return count2
-
-def Normalize(Probabilities):
-    P=Probabilities
-    normal={}
-    #print(P.items())
-    for k,v in Probabilities.items():
-        #print(k,v) #k=valor de la biblioteca y v= valor que contiene los valores de la libreria
-        #print(P.values)
-        normal[k]=P[k]/sum(P.values())
-    return normal
-prob={'A': 0.1, 'C': 0.1, 'G': 0.1, 'T': 0.1}
-
-def WeightedDie(Probabilities):
-    P=Probabilities
-    n=random.uniform(0,1)
-    #print(Probabilities.items())
-    for p,v in Probabilities.items():
-        n-=v
-        if n<=0:
-            return(p)
+    profile={'A':[],'C':[],'G':[],'T':[]}
+    pseudocount=CountWithPseudocounts(Motifs)
+    for x in pseudocount:
+        for y in pseudocount[x]:
+            prob=y/int(len(Motifs)+4)
+            profile[x].append(prob)
+    return profile
 
 def Pr(Text, Profile):
-    pro=1
-    for col in range(len(Profile['A'])):
-        if Text[col]=='A':
-            pro=pro*Profile['A'][col]
-        elif Text[col]=='C':
-            pro=pro*Profile['C'][col]
-        elif Text[col]=='G':
-            pro=pro*Profile['G'][col]
-        elif Text[col]=='T':
-            pro=pro*Profile['T'][col]
-    return pro
+    p = 1
+    for i in range(len(Text)):
+        p *= Profile[Text[i]][i]
+    return p
 
 def ProfileGeneratedString(Text, profile, k):
-    n=len(Text)
-    probabilities={}
-
-    for i in range(0,n-k+1):
-        probabilities[Text[i:i+k]]=Pr(Text[i:i+k],profile)
-    probabilities=Normalize(probabilities)
-    return WeightedDie(probabilities)
+    strings=[]
+    probabilities=[]
+    for i in range(len(Text)-k+1):
+        strings.append(Text[i:i+k])
+        probabilities.append(Pr(Text[i:i+k],profile))
+    selected_motif=random.choices(population=strings,weights=probabilities,k=1)[0]
+    return selected_motif
 
 def Consensus(motfis):
-
     pro2=ProfileWithPseudocounts(motfis)
     code=""
     for col in range(len(motfis[0])):
@@ -103,6 +72,7 @@ def Consensus(motfis):
                 symi=sym
         code+=symi
     return code
+
 def Score(motfis):
     score=0
     consen=Consensus(motfis)
@@ -114,19 +84,43 @@ def Score(motfis):
         score+=dif
     return score
 
-def GibbsSampler(Dna, k, t, N):
-    motifs=RandomMotifs(Dna, k , t)
-    #print(motifs)
-    bestmotifs=motifs
-    for j in range(1,N):
-        i=random.randint(0,t-1)
-        motifs.pop(i)
-        profile=ProfileWithPseudocounts(motifs)
-        motif_i_new=ProfileGeneratedString(Dna[i],profile,k)
-        motifs.insert(i,motif_i_new)
-        if Score(motifs)<Score(bestmotifs):
-            bestmotifs=motifs
-    return bestmotifs
+def GibbsSampler(Dna, k ,t, N,repeticiones=20):
+    random.seed(0)
+    inicio=True
+    for iteration in range(repeticiones):
+        if inicio:
+            motifs=RandomMotifs(Dna,k,t)
+            BestMotifs=motifs[:]
+            inicio=False
+        for j in range(N):
+            index=random.randint(0,t-1)
+            motifs.pop(index)
+            profile_i=ProfileWithPseudocounts(motifs)
+            mot_i=ProfileGeneratedString(Dna[index],profile_i,k)
+            motifs.insert(index,mot_i)
+            i_motifs_score=Score(motifs)
+            Bmotifs_score=Score(BestMotifs)
+            if i_motifs_score<Bmotifs_score:
+                BestMotifs=motifs[:]
+                Bmotifs_score=i_motifs_score
+    return BestMotifs
 
 
-print(GibbsSampler(['CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA','GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG','TAGTACCGAGACCGAAAGAAGTATACAGGCGT','TAGATCAAGTTTCAGGTGCACGTCGGTGAACC','AATCCACCAGCTCCACGTGCAATGTTGGCCTA'],8,5,100))
+with open(repo+"/texts/gibbs.txt",'r') as reader:
+    gibbs=reader.read().splitlines()
+    params=gibbs.pop(0).split(" ")
+    k=int(params[0])
+    t=int(params[1])
+    N=int(params[2])
+    Dna=gibbs
+#print(k,t,N,Dna)
+    
+Dna=["CGCCCCTCTCGGGGGTGTTCAGTAACCGGCCA",
+"GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG",
+"TAGTACCGAGACCGAAAGAAGTATACAGGCGT",
+"TAGATCAAGTTTCAGGTGCACGTCGGTGAACC",
+"AATCCACCAGCTCCACGTGCAATGTTGGCCTA"]
+k=8
+t=5
+N=100
+print(*GibbsSampler(Dna,k,t,N,repeticiones=20),sep="\n")
