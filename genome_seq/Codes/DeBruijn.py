@@ -2,18 +2,6 @@ import os
 repo=os.getcwd()
 from collections import defaultdict
 
-def Preffix(pattern):
-    return pattern[0:len(pattern)-1]
-def Suffix(pattern):
-    return pattern[1:len(pattern)]
-
-def Composition(k,dna_string):
-    comp=[]
-    for i in range(len(dna_string)-k+1):
-        kmer=dna_string[i:i+k]
-        comp.append(kmer)
-    return comp
-
 def DeBruijn(k,dna_string):
     dic_rel=defaultdict(list)
     for i in range(len(dna_string)-k+2):
