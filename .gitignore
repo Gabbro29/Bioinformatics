@@ -16,3 +16,4 @@ genome_seq/outputs/overlapgraphs_solve.txt
 genome_seq/outputs/debru_solve.txt
 genome_seq/outputs/debru_kmewsolve.txt
 genome_seq/outputs/debru_kmersolve.txt
+genome_seq/outputs
