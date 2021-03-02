@@ -17,3 +17,5 @@ genome_seq/outputs/debru_solve.txt
 genome_seq/outputs/debru_kmewsolve.txt
 genome_seq/outputs/debru_kmersolve.txt
 genome_seq/outputs/stringrecon_solve.txt
+genome_seq/outputs/eulercycle_solve.txt
+genome_seq/outputs/eulercycle_solve.txt
