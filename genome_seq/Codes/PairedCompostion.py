@@ -13,3 +13,4 @@ def PairedComposition(k,d,string):
         pairs.append(par)
     return pairs
 
+print(*sorted(["("+"|".join(par)+")" for par in PairedComposition(3,2,"TAATGCCATGGGATGTT")]))
