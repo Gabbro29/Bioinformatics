@@ -1,3 +1,5 @@
+import os
+repo=os.getcwd()
 def UnGrapper(kdmers):
     list_kdmers=[pair.split("|") for pair in kdmers]
     return list_kdmers
@@ -11,16 +13,30 @@ def StringSpelledByPatterns(patterns):
         else:
             string+=elem[k-1]
     return string
+def PrefixSuffixConcatenation(k,d,Prefix,Suffix):
+    concatenation=Prefix+Suffix[len(Suffix)-(k+d):len(Suffix)]
+    return concatenation
 
 def StringSpelledByGrappedGenomePath(k,d,kdmers):
     li_pairs=UnGrapper(kdmers)
     FirstPatterns=[par[0] for par in li_pairs]
     SecondPatterns=[par[1] for par in li_pairs]
-    FirstString=StringSpelledByPatterns(FirstPatterns)
-    SecondString=StringSpelledByPatterns(SecondPatterns)
-    return FirstString,SecondString
+    PrefixString=StringSpelledByPatterns(FirstPatterns)
+    SuffixString=StringSpelledByPatterns(SecondPatterns)
+    for i in range(1+k+d,len(PrefixString)):
+        if PrefixString[i] != SuffixString[i-k-d]:
+            return ("there is no string spelled by the gapped patterns")
+    return PrefixSuffixConcatenation(k,d,PrefixString,SuffixString)
 
-k=4
-d=2
-kdmers=["AG|AG","GC|GC","CA|CT","AG|TG","GC|GC","CT|CT","TG|TG","GC|GC","CT|CA"]
-print(StringSpelledByGrappedGenomePath(k,d,kdmers))
+#k=4
+#d=2
+#kdmers=["GACC|GCGC","ACCG|CGCC","CCGA|GCCG","CGAG|CCGG","GAGC|CGGA"]
+#print(StringSpelledByGrappedGenomePath(k,d,kdmers))
+with open(repo+"/genome_seq/inputs/grappedgenome.txt","r") as reader:
+    grapped=list(map(str.strip,reader.readlines()))
+    k,d=grapped[0].split(" ")
+    kdmers=grapped[1:]
+    out=StringSpelledByGrappedGenomePath(int(k),int(d),kdmers)
+
+with open(repo+"/genome_seq/outputs/grappedgenome_solve.txt","w") as writter:
+    writter.write(out)
