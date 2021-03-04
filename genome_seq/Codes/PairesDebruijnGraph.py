@@ -22,6 +22,10 @@ def PairedDebruijnGraph(k,d,kdmers):
     for key in comp:
         for nodes in comp[key]:
             conections_dic[nodes[0]].append(nodes[1])
-    return conections_dic
+    graph=[]
+    for key in conections_dic:
+        conect=key+" -> "+",".join(conections_dic[key])
+        graph.append(conect)
+    return graph
 
 print(PairedDebruijnGraph(3,1,["AAT|CCA","ATG|CAT","ATG|GAT","CAT|GGA","CCA|GGG","GCC|TGG","GGA|GTT","GGG|TGT","TAA|GCC","TGC|ATG","TGG|ATG"]))

@@ -21,3 +21,4 @@ genome_seq/outputs/stringrecon_solve.txt
 genome_seq/outputs/eulercycle_solve.txt
 genome_seq/outputs/eulerpath_solve.txt
 genome_seq/outputs/grappedgenome_solve.txt
+genome_seq/outputs/reconstructionpair_solve.txt
