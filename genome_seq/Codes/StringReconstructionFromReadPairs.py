@@ -126,10 +126,6 @@ def StringReconstructionFromReadPairs(k,d,kdmers):
     path=EulerianGraphs(db,mode="path").split("->")
     dna_string=StringSpelledByGrappedGenomePath(k,d,path)
     return dna_string
-k=4
-d=2
-kdmers=["GAGA|TTGA","TCGT|GATG","CGTG|ATGT","TGGT|TGAG","GTGA|TGTT","GTGG|GTGA",
-"TGAG|GTTG","GGTC|GAGA","GTCG|AGAT"]
 
 with open(repo+"/genome_seq/inputs/reconstrunctionpair.txt","r") as reader:
     ins=list(map(str.strip,reader.readlines()))

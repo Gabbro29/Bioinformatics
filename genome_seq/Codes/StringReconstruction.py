@@ -109,9 +109,6 @@ def StringReconstruction(k,patterns):
     return dna_string
     #path=EulerianGraphs(db,mode="path")
 
-#k=4
-#kmers=["CTTA","ACCA","TACC","GGCT","GCTT","TTAC"]
-#print(StringReconstruction(k,kmers))
 
 with open(repo+"/genome_seq/inputs/stringrecon.txt","r") as reader:
     stringreco=list(map(str.strip,reader.readlines()))
