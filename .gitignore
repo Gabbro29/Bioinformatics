@@ -28,3 +28,4 @@ genome_seq/outputs/numberpeptide_solve.txt
 genome_seq/outputs/linearspectrum_solve.txt
 genome_seq/outputs/cyclicspectrum_solve.txt
 genome_seq/outputs/subpeptide_solve.txt
+genome_seq/outputs/cyclopeptidesequencing_solve.txt

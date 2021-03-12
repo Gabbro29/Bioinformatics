@@ -8,7 +8,6 @@ def GenerateMassTable():
         pairs=list(map(str.split,inp))
         pairs=list(map(tuple,pairs))
     pairs_dic={pair[0]:int(pair[1]) for pair in pairs}
-    #print("".join([key for key in pairs_dic]))
     return pairs_dic
 
 def Mass(peptide):
@@ -44,54 +43,82 @@ def Expand(peptides,spectrum ,amino_acid_mass_table=GenerateMassTable()):
         expanding=[peptide for peptide in amino_acid_mass_table.keys()]
     else:
         expanding = [peptide + amino_acid for amino_acid in amino_acid_mass_table.keys() for peptide in peptides]
+    expanding_yes=[]
     for elem in expanding:
-        if Consistency(elem,spectrum)==False:
-            expanding.remove(elem)
-    return expanding
+        if Consistency(elem,spectrum,mode="linear")==True:
+            expanding_yes.append(elem)
+    return expanding_yes
     
 
 def LinearSpectrum(Peptide,alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMassTable()):
     PrefixMass=defaultdict(int)
     PrefixMass[0]=0
-    #print(PrefixMass[0])
     for pep,count in zip(Peptide,range(1,len(Peptide)+1)):
         PrefixMass[count]=PrefixMass[count-1]+AminoAcidMass[pep]
     linear_spectrum=[0]
-    #print(PrefixMass)
     for x in range(len(Peptide)):
         for y in range(x+1,len(Peptide)+1):
             linear_spectrum.append(PrefixMass[y]-PrefixMass[x])
     return sorted(linear_spectrum)
 
-def Consistency(peptide,spectrum):
-    peptide_spectrum=LinearSpectrum(peptide)
-    for spect in peptide_spectrum:
-        if spect in spectrum:   
-            quantity_in_spectrum=spectrum.count(spect) ##quantity of times that the mass appears in Spectrum
-            quantity_in_peptide_spectrum=peptide_spectrum.count(spect)
-            if quantity_in_spectrum != quantity_in_peptide_spectrum:
+def Consistency(peptide,spectrum,mode="linear"):
+    if mode=="linear":
+        peptide_spectrum=LinearSpectrum(peptide)
+        for spect in peptide_spectrum:
+            if spect not in spectrum:
                 return False
-        else:
-             return False
-    if Mass(peptide)>ParentMass(spectrum):
-        return False
-    return True
+        if Mass(peptide)>ParentMass(spectrum):
+            return False
+        return True
         
+    elif mode=="cyclo":
+        peptide_cyclospectrum=CyclicSpectrum(peptide)
+        for spect in peptide_cyclospectrum:
+            if spect not in spectrum:
+                return False
+        if Mass(peptide)>ParentMass(spectrum):
+            return False
+        return True
+        
+def FromPeptideToMass(peptide):
+    mass_peptide=[]
+    tableofmasses=GenerateMassTable()
+    for aa in peptide:
+        mass_peptide.append(str(tableofmasses[aa]))
+    return "-".join(mass_peptide)
 
 def CyclopeptideSequencing(Spectrum):
     CandidatePeptides=[]
     FinalPeptides=[]
     CandidatePeptides=Expand(CandidatePeptides,Spectrum)
+    veces=0
     while CandidatePeptides:
+        veces+=1
         for Peptide in CandidatePeptides:
             if Mass(Peptide)==ParentMass(Spectrum):
                 if (CyclicSpectrum(Peptide)==Spectrum) and (Peptide not in FinalPeptides):
                     FinalPeptides.append(Peptide)
         CandidatePeptides=Expand(CandidatePeptides,Spectrum)
-        print(CandidatePeptides)
-    return FinalPeptides
+    FinalFinalPeptides=[]
+    for pep in FinalPeptides:
+        if (Consistency(pep,Spectrum,mode="cyclo")==True):
+            FinalFinalPeptides.append(pep)
+    return FinalFinalPeptides
 
-spectrum=list(map(int,["0", "113", "128", "186", "241", "299", "314", "427"]))
-print(CyclopeptideSequencing(spectrum))
-debugging="a"
-#print(Expand([""],spectrum))
+def EliminateRepitedMasses(peptide_list):
+    peptide_as_masses=list(map(FromPeptideToMass,peptide_list))
+    no_repited=[]
+    for pep in peptide_as_masses:
+        if pep not in no_repited:
+            no_repited.append(pep)
+    return no_repited
+
+with open(repo+"/genome_seq/inputs/cyclopeptidesequencing.txt","r") as reader:
+    inp=list(map(str.strip,reader.readlines()))
+
+    spectrum=list(map(int,inp[0].split(" ")))
+
+    sequencing=EliminateRepitedMasses(CyclopeptideSequencing(spectrum))
+    out=" ".join(sequencing)
+with open(repo+"/genome_seq/outputs/cyclopeptidesequencing_solve.txt","w") as writter:
+    writter.write(out)

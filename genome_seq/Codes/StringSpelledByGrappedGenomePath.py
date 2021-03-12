@@ -28,7 +28,6 @@ def StringSpelledByGrappedGenomePath(k,d,kdmers):
             return ("there is no string spelled by the gapped patterns")
     return PrefixSuffixConcatenation(k,d,PrefixString,SuffixString)
 
-#print(StringSpelledByGrappedGenomePath(2,1,["AG|AG","GC|GC","CA|CT","AG|TG","GC|GC","CT|CT","TG|TG","GC|GC","CT|CA"]))
 
 with open(repo+"/genome_seq/inputs/grappedgenome.txt","r") as reader:
     grapped=list(map(str.strip,reader.readlines()))
