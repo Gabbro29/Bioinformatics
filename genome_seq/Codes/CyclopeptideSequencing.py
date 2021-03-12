@@ -115,9 +115,7 @@ def EliminateRepitedMasses(peptide_list):
 
 with open(repo+"/genome_seq/inputs/cyclopeptidesequencing.txt","r") as reader:
     inp=list(map(str.strip,reader.readlines()))
-
     spectrum=list(map(int,inp[0].split(" ")))
-
     sequencing=EliminateRepitedMasses(CyclopeptideSequencing(spectrum))
     out=" ".join(sequencing)
 with open(repo+"/genome_seq/outputs/cyclopeptidesequencing_solve.txt","w") as writter:
