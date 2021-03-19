@@ -31,3 +31,4 @@ genome_seq/outputs/subpeptide_solve.txt
 genome_seq/outputs/cyclopeptidesequencing_solve.txt
 genome_seq/Codes/__pycache__
 genome_seq/outputs
+genome_seq/outputs/circular_solve.txt
