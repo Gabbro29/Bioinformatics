@@ -31,9 +31,10 @@ def CyclicSpectrum(Peptide,alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMass
                 cyclic_spectrum.append(peptide_mass-(PrefixMass[y]-PrefixMass[x]))
     return sorted(cyclic_spectrum)
 
+if __name__ == "__main__":
 
-with open(repo+"/genome_seq/inputs/cyclicspectrum.txt","r") as reader:
-    inp=list(map(str.strip,reader.readlines()))
-    spectrum=" ".join(list(map(str,CyclicSpectrum(inp[0]))))
-with open(repo+"/genome_seq/outputs/cyclicspectrum_solve.txt","w") as writter:
-    writter.write(spectrum)
+    with open(repo+"/genome_seq/inputs/cyclicspectrum.txt","r") as reader:
+        inp=list(map(str.strip,reader.readlines()))
+        spectrum=" ".join(list(map(str,CyclicSpectrum(inp[0]))))
+    with open(repo+"/genome_seq/outputs/cyclicspectrum_solve.txt","w") as writter:
+        writter.write(spectrum)
