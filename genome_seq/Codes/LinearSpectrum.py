@@ -25,12 +25,11 @@ def LinearSpectrum(Peptide,alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMass
             linear_spectrum.append(PrefixMass[y]-PrefixMass[x])
     return sorted(linear_spectrum)
 
-a=list(map(int,"0 71 99 101 103 128 129 199 200 204 227 230 231 298 303 328 330 332 333".split(" ")))
-print(LinearSpectrum("TCE")==a)
-with open(repo+"/genome_seq/inputs/linearspectrum.txt","r") as reader:
-    inp=list(map(str.strip,reader.readlines()))
-    #print(LinearSpectrum(inp[0]))
-    spectrum=" ".join(list(map(str,LinearSpectrum(inp[0]))))
+if __name__=="__main__":    
+    with open(repo+"/genome_seq/inputs/linearspectrum.txt","r") as reader:
+        inp=list(map(str.strip,reader.readlines()))
+        #print(LinearSpectrum(inp[0]))
+        spectrum=" ".join(list(map(str,LinearSpectrum(inp[0]))))
 
-with open(repo+"/genome_seq/outputs/linearspectrum_solve.txt","w") as writter:
-    writter.write(spectrum)
+    with open(repo+"/genome_seq/outputs/linearspectrum_solve.txt","w") as writter:
+        writter.write(spectrum) 
