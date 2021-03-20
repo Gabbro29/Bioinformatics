@@ -113,10 +113,12 @@ def EliminateRepitedMasses(peptide_list):
             no_repited.append(pep)
     return no_repited
 
-with open(repo+"/genome_seq/inputs/cyclopeptidesequencing.txt","r") as reader:
-    inp=list(map(str.strip,reader.readlines()))
-    spectrum=list(map(int,inp[0].split(" ")))
-    sequencing=EliminateRepitedMasses(CyclopeptideSequencing(spectrum))
-    out=" ".join(sequencing)
-with open(repo+"/genome_seq/outputs/cyclopeptidesequencing_solve.txt","w") as writter:
-    writter.write(out)
+if __name__ == "__main__":      
+                
+    with open(repo+"/genome_seq/inputs/cyclopeptidesequencing.txt","r") as reader:
+        inp=list(map(str.strip,reader.readlines()))
+        spectrum=list(map(int,inp[0].split(" ")))
+        sequencing=EliminateRepitedMasses(CyclopeptideSequencing(spectrum))
+        out=" ".join(sequencing)
+    with open(repo+"/genome_seq/outputs/cyclopeptidesequencing_solve.txt","w") as writter:
+        writter.write(out)
