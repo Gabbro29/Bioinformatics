@@ -2,7 +2,7 @@ from os import getcwd
 import CyclopeptideSequencing as cseq
 import PeptideScore as ps
 
-def Trim(Leaderboard, Spectrum,N,Alphabet=cseq.GenerateAminoAc(),AminoAcidMass=cseq.GenerateMassTable()):
+def Trimmer(Leaderboard, Spectrum,N,Alphabet=cseq.GenerateAminoAc(),AminoAcidMass=cseq.GenerateMassTable()):
     linearscore=[]
     for i in range(0,len(Leaderboard)):
         peptide=Leaderboard[i]
