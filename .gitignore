@@ -10,25 +10,5 @@ Assignment 5 week/Sequence_100.txt
 Assignment 5 week/Sequence_500.txt
 Assignment 5 week/Sequence_1000.txt
 Assignment 5 week/Sequences_250.txt
-genome_seq/outputs/composition_solv.txt
-genome_seq/outputs/pathgeno_solve.txt
-genome_seq/outputs/overlapgraphs_solve.txt
-genome_seq/outputs/debru_solve.txt
-genome_seq/outputs/debru_kmewsolve.txt
-genome_seq/outputs/debru_kmersolve.txt
-
-genome_seq/outputs/stringrecon_solve.txt
-genome_seq/outputs/eulercycle_solve.txt
-genome_seq/outputs/eulerpath_solve.txt
-genome_seq/outputs/grappedgenome_solve.txt
-genome_seq/outputs/reconstructionpair_solve.txt
-genome_seq/outputs/traductor_solve.txt
-genome_seq/outputs/peptideencoding_solve.txt
-genome_seq/outputs/numberpeptide_solve.txt
-genome_seq/outputs/linearspectrum_solve.txt
-genome_seq/outputs/cyclicspectrum_solve.txt
-genome_seq/outputs/subpeptide_solve.txt
-genome_seq/outputs/cyclopeptidesequencing_solve.txt
-genome_seq/Codes/__pycache__
-genome_seq/outputs
-genome_seq/outputs/circular_solve.txt
+outputs/
+__pycache__/
