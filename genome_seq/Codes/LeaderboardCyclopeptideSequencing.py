@@ -2,6 +2,7 @@ import os
 
 repo=os.getcwd()
  ### revisar el codigo
+## this code is thanks to guilhermesilveira
 pep_mass = {"G": 57,
 "A": 71,
 "S": 87,
