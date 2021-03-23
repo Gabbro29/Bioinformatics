@@ -26,30 +26,33 @@ pep_mass = {"G": 57,
 
 aminoacidos = "GASPVTCINDKEMHFRYW"
 class Peptide:
-    def __init__(self, code:str):
-        self.code=code
+    def __init__(self, masses:list):
+        self.masas=masses
     def largo(self):
-        return len(self.code)
+        return len(self.masas)
     def masa_total(self):
-        return sum([pep_mass[c] for c in self.code])
+        return sum(self.masas)
     def append(self,code):
-        return Peptide(self.code+code)
+        return Peptide(self.masas+[pep_mass[code]])
     def expand(self):
-        return [Peptide(self.code+p) for p in aminoacidos]
+        return [Peptide(self.masas + [pep_mass[p]]) for p in aminoacidos]
+    def to_code(self):
+        return [pep_mass.get(m, str(m)) for m in self.masas]
+
     def __str__(self):
-        return f"[peptide{self.code}]"
-    def masas(self):
-        return [pep_mass[aa] for aa in self.code]
+        return f"[peptide{self.masas}]"
+
     def __repr__(self):
-        return self.__str__
+        return self.__str__()
+
     def __lt__(self,other):
-        return self.code<other.code
+        return self.masas<other.masas
     def cyclospectrum(self):
-        cycli=self.code+self.code
+        cycli=self.masas+self.masas
         spectrum=[0]
-        for largo_spec in range(1, self.largo()+1):
+        for largo_spec in range(1, self.largo()):
             for i in range(0,self.largo()):
-                spe=sum([pep_mass[c] for c in cycli[i:i+largo_spec]])
+                spe=sum(cycli[i:i+largo_spec])
                 spectrum.append(spe)
         spectrum.append(self.masa_total())
         return Spectrum(spectrum) ## se genera un objeto spectrum
@@ -57,9 +60,8 @@ class Peptide:
         spectrum=[0]
         for largo_spec in range(1,self.largo()+1):
             for i in range(0,self.largo()-largo_spec+1):
-                spe=sum([pep_mass[c] for c in self.code])
+                spe=sum(self.masas[i:i+largo_spec])
                 spectrum.append(spe)
-        spectrum.append(self.masa_total())
         return Spectrum(spectrum)
 class Spectrum:
     def __init__(self, spectrum:list):
@@ -70,20 +72,24 @@ class Spectrum:
 
     def __repr__(self):
         return self.__str__()
+
     def expand_peptides(self,candidates_pep):
         candidates_pepti=[peptide.expand() for peptide in candidates_pep]
         candidates_pepti=[p for sublist in candidates_pepti for p in sublist]
         return candidates_pepti
     def leaderboardcyclopeptidesequencing(self,n):
-        leader=Peptide("")
+        leader=Peptide([])
         candidates=[leader]
         while len(candidates)>0:
             candidates=self.expand_peptides(candidates)
             leaderboard=Leaderboard(self)
             for pep in candidates:
                 if pep.masa_total()==self.masa_spec:
-                    if self.score(pep.cyclospectrum())>self.score(leader.cyclospectrum()):
+                    if self.score(pep.cyclospectrum())>= self.score(leader.cyclospectrum()):
                         leader=pep
+                        if self.score(leader.cyclospectrum()) == 83:
+                            print("-".join(map(str,leader.masses)))
+                    leaderboard.add(pep)
                 elif pep.masa_total()<self.masa_spec:
                     leaderboard.add(pep)
             candidates=leaderboard.trim(n)
@@ -129,5 +135,5 @@ if __name__ == "__main__":
         n=int(inp[0])
         spec_list=list(map(int,inp[1].split(" ")))
         spectr=Spectrum(spec_list)
-        print(spectr.leaderboardcyclopeptidesequencing(n).masas())
+        print(spectr.leaderboardcyclopeptidesequencing(n).masas)
 
