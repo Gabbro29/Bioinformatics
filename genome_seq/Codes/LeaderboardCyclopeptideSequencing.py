@@ -101,6 +101,7 @@ class Spectrum:
                 comp_spec.remove(mass)
                 total+=1
         return total
+    
 class Leaderboard:
     def __init__(self, experimental_spectrum):
         self.board=[] ## this board has the elemnts score and peptides
