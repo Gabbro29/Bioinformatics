@@ -88,8 +88,6 @@ class Spectrum:
                 if pep.masa_total()==self.masa_spec:
                     if self.score(pep.cyclospectrum())>= self.score(leader.cyclospectrum()):
                         leader=pep
-                        if self.score(leader.cyclospectrum()) == 83:
-                            print("-".join(map(str,leader.masses)))
                     leaderboard.add(pep)
                 elif pep.masa_total()<self.masa_spec:
                     leaderboard.add(pep)
