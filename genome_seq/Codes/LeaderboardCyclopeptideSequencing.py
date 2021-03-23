@@ -1,140 +1,133 @@
-
 import os
-from collections import defaultdict
+
 repo=os.getcwd()
-import math
+ ### revisar el codigo
+pep_mass = {"G": 57,
+"A": 71,
+"S": 87,
+"P": 97,
+"V": 99,
+"T": 101,
+"C": 103,
+"I": 113,
+"L": 113,
+"N": 114,
+"D": 115,
+"K": 128,
+"Q": 128,
+"E": 129,
+"M": 131,
+"H": 137,
+"F": 147,
+"R": 156,
+"Y": 163,
+"W": 186}
 
-def GenerateMassTable():
-    with open(repo+"/genome_seq/codes/integer_mass_table.txt","r") as reader:
-        inp=list(map(str.strip,reader.readlines()))
-        pairs=list(map(str.split,inp))
-        pairs=list(map(tuple,pairs))
-    pairs_dic={pair[0]:int(pair[1]) for pair in pairs}
-    return pairs_dic
 
-def GenerateAminoAc():
-    aminoac_letters= ['G', 'A', 'S', 'P', 'V', 'T', 'C', 'I', 'N', 'D', 'K', 'E', 'M', 'H', 'F', 'R', 'Y', 'W']
-    return aminoac_letters
+aminoacidos = "GASPVTCINDKEMHFRYW"
+class Peptide:
+    def __init__(self, code:str):
+        self.code=code
+    def largo(self):
+        return len(self.code)
+    def masa_total(self):
+        return sum([pep_mass[c] for c in self.code])
+    def append(self,code):
+        return Peptide(self.code+code)
+    def expand(self):
+        return [Peptide(self.code+p) for p in aminoacidos]
+    def __str__(self):
+        return f"[peptide{self.code}]"
+    def masas(self):
+        return [pep_mass[aa] for aa in self.code]
+    def __repr__(self):
+        return self.__str__
+    def __lt__(self,other):
+        return self.code<other.code
+    def cyclospectrum(self):
+        cycli=self.code+self.code
+        spectrum=[0]
+        for largo_spec in range(1, self.largo()+1):
+            for i in range(0,self.largo()):
+                spe=sum([pep_mass[c] for c in cycli[i:i+largo_spec]])
+                spectrum.append(spe)
+        spectrum.append(self.masa_total())
+        return Spectrum(spectrum) ## se genera un objeto spectrum
+    def linearspectrum(self):
+        spectrum=[0]
+        for largo_spec in range(1,self.largo()+1):
+            for i in range(0,self.largo()-largo_spec+1):
+                spe=sum([pep_mass[c] for c in self.code])
+                spectrum.append(spe)
+        spectrum.append(self.masa_total())
+        return Spectrum(spectrum)
+class Spectrum:
+    def __init__(self, spectrum:list):
+        self.spectrum=sorted(spectrum)
+        self.masa_spec=int(spectrum[-1])
+    def __str__(self):
+        return f"[spectrum {self.spectrum.__str__()}]"
 
-def Expand(peptides,spectrum ,amino_acid_mass_table=GenerateMassTable()):
-    if peptides==[]:
-        expanding=[peptide for peptide in amino_acid_mass_table.keys()]
-    else:
-        expanding = [peptide + amino_acid for amino_acid in amino_acid_mass_table.keys() for peptide in peptides]
-    expanding_yes=[]
-    for elem in expanding:
-        if Consistency(elem,spectrum,mode="linear")==True:
-            expanding_yes.append(elem)
-    return expanding_yes
+    def __repr__(self):
+        return self.__str__()
+    def expand_peptides(self,candidates_pep):
+        candidates_pepti=[peptide.expand() for peptide in candidates_pep]
+        candidates_pepti=[p for sublist in candidates_pepti for p in sublist]
+        return candidates_pepti
+    def leaderboardcyclopeptidesequencing(self,n):
+        leader=Peptide("")
+        candidates=[leader]
+        while len(candidates)>0:
+            candidates=self.expand_peptides(candidates)
+            leaderboard=Leaderboard(self)
+            for pep in candidates:
+                if pep.masa_total()==self.masa_spec:
+                    if self.score(pep.cyclospectrum())>self.score(leader.cyclospectrum()):
+                        leader=pep
+                elif pep.masa_total()<self.masa_spec:
+                    leaderboard.add(pep)
+            candidates=leaderboard.trim(n)
+        return leader
+    def score(self, comparison_spectrum):
+        total=0
+        comp_spec=comparison_spectrum.spectrum.copy()
+        for mass in self.spectrum:
+            if mass in comp_spec:
+                comp_spec.remove(mass)
+                total+=1
+        return total
+class Leaderboard:
+    def __init__(self, experimental_spectrum):
+        self.board=[] ## this board has the elemnts score and peptides
+        self.experimental_spectrum=experimental_spectrum
 
-def LinearSpectrum(Peptide,alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMassTable()):
-    PrefixMass=defaultdict(int)
-    PrefixMass[0]=0
-    for pep,count in zip(Peptide,range(1,len(Peptide)+1)):
-        PrefixMass[count]=PrefixMass[count-1]+AminoAcidMass[pep]
-    linear_spectrum=[0]
-    for x in range(len(Peptide)):
-        for y in range(x+1,len(Peptide)+1):
-            linear_spectrum.append(PrefixMass[y]-PrefixMass[x])
-    return sorted(linear_spectrum)
+    def add(self,pep):
+        score=pep.linearspectrum().score(self.experimental_spectrum) ##hacer score 👍
+        t = (score,pep)
+        self.board.append(t)
+        return self
 
-def Mass(peptide):
-    mass=0
-    table=GenerateMassTable()
-    for aa in peptide:
-        mass+=table[aa]
-    return mass
-
-def ParentMass(spectrum):
-    return max(spectrum)
-
-def CyclicSpectrum(Peptide,alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMassTable()):
-    PrefixMass=defaultdict(int)
-    PrefixMass[0]=0
-    for pep,count in zip(Peptide,range(1,len(Peptide)+1)):
-        PrefixMass[count]=PrefixMass[count-1]+AminoAcidMass[pep]
-    peptide_mass=PrefixMass[len(Peptide)]
-    cyclic_spectrum=[0]
-    for x in range(len(Peptide)):
-        for y in range(x+1,len(Peptide)+1):
-            cyclic_spectrum.append(PrefixMass[y]-PrefixMass[x])
-            if x>0 and y<len(Peptide):
-                cyclic_spectrum.append(peptide_mass-(PrefixMass[y]-PrefixMass[x]))
-    return sorted(cyclic_spectrum)
-
-def Consistency(peptide,spectrum,mode="linear"):
-    if mode=="linear":
-        peptide_spectrum=LinearSpectrum(peptide)
-        for spect in peptide_spectrum:
-            if spect not in spectrum:
-                return False
-        if Mass(peptide)>ParentMass(spectrum):
-            return False
-        return True
+    def add_all(self,peptides:list):
+        for pep in peptides:
+            self.add(pep)
+        return self
         
-    elif mode=="cyclo":
-        peptide_cyclospectrum=CyclicSpectrum(peptide)
-        for spect in peptide_cyclospectrum:
-            if spect not in spectrum:
-                return False
-        if Mass(peptide)>ParentMass(spectrum):
-            return False
-        return True
-
-
-def Trimmer(Leaderboard, Spectrum,N,Alphabet=GenerateAminoAc(),AminoAcidMass=GenerateMassTable()):
-    linearscore=[]
-    for i in range(0,len(Leaderboard)):
-        peptide=Leaderboard[i]
-        linearscore.append(PeptideScore(peptide,Spectrum,mode="linear"))
-    order_leaderboard=[x for _,x in sorted(zip(linearscore,Leaderboard),reverse=True)]
-    linearscore.sort(reverse=True)
-    for j in range(N+1,len(Leaderboard)):
-        if linearscore[j]<linearscore[N]:
-            return order_leaderboard[0:j-1]
-    return order_leaderboard
-
-def PeptideScore(aminoacid,spectrum,mode="cyclo"):
-    if mode=="cyclo":
-        amino_cs=CyclicSpectrum(aminoacid)
-    if mode=="linear":
-        amino_cs=LinearSpectrum(aminoacid)
-    score=0
-    for aa in set(spectrum):
-        score+=min(amino_cs.count(aa),spectrum.count(aa))
-    return score
-
-def LeaderboardCyclopeptideSequencing(N,Spectrum):
-    Leaderboard=Expand([],Spectrum)
-    LeaderPeptide=""
-    while len(Leaderboard):
-        t=Leaderboard[:]
-        for peptide in t:
-            if Mass(peptide)==ParentMass(Spectrum):
-                if PeptideScore(peptide, Spectrum)>PeptideScore(LeaderPeptide,Spectrum):
-                    LeaderPeptide=peptide
-        Leaderboard=Expand(Leaderboard,Spectrum)[:]
-        if len(Leaderboard)>N:
-            Leaderboard=Trimmer(Leaderboard,Spectrum,N)
-        N=math.ceil(N/2)
-    return FromPeptideToMass(LeaderPeptide)
-
-def FromPeptideToMass(peptide):
-    mass_peptide=[]
-    tableofmasses=GenerateMassTable()
-    for aa in peptide:
-        mass_peptide.append(str(tableofmasses[aa]))
-    return "-".join(mass_peptide)
-
+    def trim(self,n:int):
+        order=list(reversed(sorted(self.board)))
+        trimmed=order[0:n]
+        while n<len(order) and order[n][0]==order[n-1][0]: ## viewing ties
+            n+=1
+            trimmed=order[0:n]
+        return [pep for _,pep in trimmed] ## we want only the peptide
 if __name__ == "__main__":      
                 
+    #n=10
+    #spect=Spectrum([0 ,71 ,113 ,129 ,147 ,200 ,218 ,260 ,313 ,331 ,347 ,389 ,460])
+    #print(str(spect.leaderboardcyclopeptidesequencing(10).masas()))
     with open(repo+"/genome_seq/inputs/leader.txt","r") as reader:
         inp=list(map(str.strip,reader.readlines()))
-        #print(list(map(int,inp[1].split(" "))))
-        spectrum=list(map(int,inp[1].split(" ")))
-        #print(spectrum)
         n=int(inp[0])
-        lea=LeaderboardCyclopeptideSequencing(n,spectrum)
-        print(lea)
-    #with open(repo+"/genome_seq/outputs/cyclopeptidesequencing_solve.txt","w") as writter:
-    #    writter.write(out)
+        spec_list=list(map(int,inp[1].split(" ")))
+        spectr=Spectrum(spec_list)
+        print(spectr.leaderboardcyclopeptidesequencing(n).masas())
+
