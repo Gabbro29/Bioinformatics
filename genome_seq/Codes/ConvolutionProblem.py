@@ -37,7 +37,7 @@ class Peptide:
         return Peptide(self.masas+[pep_mass[code]])
     def expand(self,complete_aa=False):
         if complete_aa:
-            return [Peptide(self.masas + [p]) for p in ranfe(57,201)]
+            return [Peptide(self.masas + [p]) for p in range(57,201)]
         return [Peptide(self.masas + [pep_mass[p]]) for p in aminoacidos]
     def to_code(self):
         return [pep_mass.get(m, str(m)) for m in self.masas]
