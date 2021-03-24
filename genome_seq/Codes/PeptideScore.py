@@ -19,6 +19,5 @@ if __name__=="__main__":
     with open(repo+"/genome_seq/inputs/cycloscore.txt","r") as reader:
         inp=list(map(str.strip,reader.readlines()))
         score=PeptideScore(inp[0],list(map(int,inp[1].split(" "))))
-
     with open(repo+"/genome_seq/outputs/cycloscore_solve.txt","w") as writter:
         writter.write(str(score))
