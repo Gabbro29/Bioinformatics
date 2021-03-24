@@ -12,7 +12,6 @@ def PeptideScore(aminoacid,spectrum,mode="cyclo"):
     return score
 
 
-
 if __name__=="__main__":
     repo=os.getcwd()
 
